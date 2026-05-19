@@ -3,8 +3,10 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfi
 
 
 export const useAuth = () => {
+    
     const login = async (data: { email: string; password: string }) => {
-        await signInWithEmailAndPassword(auth, data.email, data.password);
+       await signInWithEmailAndPassword(auth, data.email, data.password);
+       return true
     };
 
     const logout = async () => {
@@ -17,6 +19,7 @@ export const useAuth = () => {
             displayName: data.name
         })
     }
+    
 
     return { login, logout, signup };
 };
