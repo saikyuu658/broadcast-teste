@@ -37,6 +37,7 @@ export const MyField = forwardRef<HTMLInputElement, FieldProps>(
       {type == 'password'?
          <FormControl fullWidth variant="standard" className={className}>
         {label && <InputLabel error={error}>{label}</InputLabel>}
+        {/* @ts-ignore */}
         <Input
           type={showPassword ? (showPassword ? "text" : "password") : type}
           error={error}

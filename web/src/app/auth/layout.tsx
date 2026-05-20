@@ -1,11 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { onAuthStateChanged, type User } from 'firebase/auth';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../configs/firebase';
 import { useNavigate, Outlet } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { Sidebar } from '../../components/bar';
 
-// 1. Cria o contexto para expor o UID do usuário globalmente
 const AuthContext = createContext<{ userUid: string | null; authLoading: boolean }>({
     userUid: null,
     authLoading: true,
@@ -44,7 +43,7 @@ export default function Layout() {
         <AuthContext.Provider value={{ userUid, authLoading }}>
             <section className="flex">
                 <Sidebar navItems={navItems} />
-                <main className=" flex-col gap-5 p-4 w-full max-h-[100vh] overflow-y-auto">
+                <main className=" flex-col gap-5 p-4 w-full max-h-screen overflow-y-auto">
                     <Outlet />
                 </main>
             </section>

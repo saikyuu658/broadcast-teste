@@ -8,7 +8,7 @@ import Autocomplete from "@mui/material/Autocomplete"
 import Typography from "@mui/material/Typography"
 import type { Contact } from "../../@types/contacts"
 import { useContact } from "../../hooks/useContacts"
-import { useNavigate, useParams } from 'react-router-dom';
+import {  useParams } from 'react-router-dom';
 import { useConnections } from "../../hooks/useConnections"
 import { useMessage } from "../../hooks/useMessage"
 import TableContainer from "@mui/material/TableContainer"
@@ -90,7 +90,8 @@ export const NewMessage = () => {
         setSelected(temp)
     }
 
-    const handleSelect = async (event: any, value: any) => {
+    const handleSelect = async (_event: any, value: any) => {
+        
         if (value) {
             const temp = contacts.find(e => e.uid == value.uid)
             if (!temp || !temp.uid || !connectionId) return

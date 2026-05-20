@@ -54,7 +54,7 @@ export function useContact(idConnection: string | null = null) {
 
             setContacts(listaContatos);
             setLoading(false);
-        }, (error) => {
+        }, (_error) => {
             setLoading(false);
         });
 
