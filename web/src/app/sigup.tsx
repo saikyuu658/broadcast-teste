@@ -30,7 +30,6 @@ export const SignupScree = () => {
       await signup(data)
       toast.success("Conta criada com sucesso realizado com sucesso!")
     } catch (error) {
-      console.log(error)
       toast.error("Erro ao criar conta. tente novamente mais tarde.")
     }
   }

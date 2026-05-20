@@ -6,49 +6,40 @@ import Typography from "@mui/material/Typography"
 import CardActions from "@mui/material/CardActions"
 import Button from "@mui/material/Button"
 import { useEffect, useState } from "react"
-import type { Contact } from "../@types/contacts"
-import { useContact } from "../hooks/useContacts"
 import toast from "react-hot-toast"
+import type { Connection } from "../@types/conections"
+import { useConnections } from "../hooks/useConnections"
 
 
 interface ModalAddProps {
     handleClose: () => void,
     isOpen: boolean,
-    contact: Contact
+    conection: Connection
 }
 
-export const ModalEditContact = (props: ModalAddProps) => {
-    const [name, setName] = useState<string | null>(props.contact.name)
-    const [phone, setPhone] = useState<string | null>(props.contact.phone)
-    const [uid, setUid] = useState<string | undefined>(props.contact.uid)
+export const ModalEditConnection = (props: ModalAddProps) => {
+    const [name, setName] = useState<string | null>(props.conection.name)
+    const [uid, setUid] = useState<string | undefined>(props.conection.uid)
 
 
 
     useEffect(() => {
-        setName(props.contact.name)
-        setPhone(props.contact.phone)
-        setUid(props.contact.uid)
-    }, [props.contact])
+        setName(props.conection.name)
+        setUid(props.conection.uid)
+    }, [props.conection])
 
-    const { updateContact } = useContact()
+    const {updateConnection} = useConnections()
 
     const handleSubmit = async () => {
-        if (!name || !phone || !uid) {
+        if (!name  || !uid) {
             toast.error('Preencha os campos')
             return
         }
 
         try {
-            const newContact: Contact = {
-                name: name,
-                phone: phone,
-                userUid: props.contact.userUid,
-                uid: uid,
-                createdAt: props.contact.createdAt
-            }
 
-            await updateContact(uid, newContact)
-            toast.success('Contato Atualizado')
+            await updateConnection(uid, name)
+            toast.success('Conexão Atualizado')
             props.handleClose()
         } catch (error) {
             toast.error("Erro ao criar contato")
@@ -62,9 +53,6 @@ export const ModalEditContact = (props: ModalAddProps) => {
         setName(event?.target?.value || '')
     }
 
-    const handleChangePhone = (event: any) => {
-        setPhone(event?.target?.value || '')
-    }
 
     return (
         <Modal
@@ -99,14 +87,6 @@ export const ModalEditContact = (props: ModalAddProps) => {
                             onChange={handleChangeName}
                             label="Nome"
                             placeholder="Nome do seu novo contato"
-                        />
-
-                        <MyField
-                            type="text"
-                            value={phone}
-                            onChange={handleChangePhone}
-                            label="Telefone"
-                            placeholder="Número de telefone"
                         />
                     </div>
                 </CardContent>

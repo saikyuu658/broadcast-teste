@@ -5,65 +5,39 @@ import CardContent from "@mui/material/CardContent"
 import Typography from "@mui/material/Typography"
 import CardActions from "@mui/material/CardActions"
 import Button from "@mui/material/Button"
-import { useEffect, useState } from "react"
-import type { Contact } from "../@types/contacts"
-import { useContact } from "../hooks/useContacts"
+import { useState } from "react"
 import toast from "react-hot-toast"
+import { useConnections } from "../hooks/useConnections"
 
 
 interface ModalAddProps {
     handleClose: () => void,
     isOpen: boolean,
-    contact: Contact
 }
 
-export const ModalEditContact = (props: ModalAddProps) => {
-    const [name, setName] = useState<string | null>(props.contact.name)
-    const [phone, setPhone] = useState<string | null>(props.contact.phone)
-    const [uid, setUid] = useState<string | undefined>(props.contact.uid)
+export const ModalAddConnections = (props: ModalAddProps) => {
 
-
-
-    useEffect(() => {
-        setName(props.contact.name)
-        setPhone(props.contact.phone)
-        setUid(props.contact.uid)
-    }, [props.contact])
-
-    const { updateContact } = useContact()
-
-    const handleSubmit = async () => {
-        if (!name || !phone || !uid) {
-            toast.error('Preencha os campos')
-            return
-        }
-
-        try {
-            const newContact: Contact = {
-                name: name,
-                phone: phone,
-                userUid: props.contact.userUid,
-                uid: uid,
-                createdAt: props.contact.createdAt
-            }
-
-            await updateContact(uid, newContact)
-            toast.success('Contato Atualizado')
-            props.handleClose()
-        } catch (error) {
-            toast.error("Erro ao criar contato")
-
-        }
-
-    }
-
+    const { createConnection } = useConnections()
+    const [name, setName] = useState<string | null>('')
 
     const handleChangeName = (event: any) => {
         setName(event?.target?.value || '')
     }
 
-    const handleChangePhone = (event: any) => {
-        setPhone(event?.target?.value || '')
+
+    const handleSubmit =async () => {
+        if (!name ) {
+            toast.error("preencha as informações")
+            return
+        }
+        try {
+            await createConnection(name)
+            toast.success('Contato criado')
+            props.handleClose()
+        } catch (error) {
+            toast.error("Erro ao criar contato")
+
+        }
     }
 
     return (
@@ -84,34 +58,27 @@ export const ModalEditContact = (props: ModalAddProps) => {
                     bgcolor: 'background.paper',
                     borderRadius: 2,
                     boxShadow: 24,
-                    py: 4
+                    py: 4,
                 }}
             >
 
                 <CardContent sx={{ width: 450 }}>
                     <Typography gutterBottom variant="h5" component="div">
-                        Editar contato
+                        Adicionar nova conexão
                     </Typography>
                     <div className="gap-4 flex flex-col my-5">
                         <MyField
                             type="text"
+                            label="Nome"
                             value={name}
                             onChange={handleChangeName}
-                            label="Nome"
                             placeholder="Nome do seu novo contato"
                         />
 
-                        <MyField
-                            type="text"
-                            value={phone}
-                            onChange={handleChangePhone}
-                            label="Telefone"
-                            placeholder="Número de telefone"
-                        />
                     </div>
                 </CardContent>
                 <CardActions>
-                    <Button variant="contained" onClick={handleSubmit}>Atualizar</Button>
+                    <Button variant="contained" onClick={handleSubmit}>Criar</Button>
                     <Button variant="outlined" onClick={props.handleClose}>Cancelar</Button>
                 </CardActions>
 

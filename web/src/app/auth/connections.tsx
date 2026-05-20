@@ -5,15 +5,43 @@ import Typography from "@mui/material/Typography"
 import CardActions from "@mui/material/CardActions"
 import { useNavigate } from "react-router-dom"
 import { useConnections } from "../../hooks/useConnections"
+import { useState } from "react"
+import type { Connection } from "../../@types/conections"
+import { ModalAddConnections } from "../../components/modalAddConnection"
+import { ModalEditConnection } from "../../components/modalEditConnection"
 
 
 export const Connections = () => {
     const navigate = useNavigate()
-    const { conexoes } = useConnections()
-    const handleNewConnection = () => {
-        navigate("/auth/message")
+    const { connections } = useConnections()
+    const [openEdit, setOpenEdit] = useState(false)
+    const [openNew, setOpenNew] = useState(false)
+    const [selected, setSelected] = useState<Connection>({
+        userUid: '',
+        createdAt: new Date(),
+        name: '',
+        uid: ''
+    })
+    
+    const handleDetails = (uid: string) => {
+        navigate("/auth/message/"+uid)
     }
 
+    const handleOpen = (item: Connection) => {
+        setSelected(item)
+        setOpenEdit(true)
+    }
+
+    const handleOpenNew= ()=>{
+        setOpenNew(true)
+    }
+
+    const handleClose = () => {
+        setOpenEdit(false)
+        setOpenNew(false)
+    }
+
+     
 
     return (
         <section className="w-full">
@@ -30,11 +58,11 @@ export const Connections = () => {
                 <Button
                     variant="contained"
                     className="h-fit"
-                    onClick={handleNewConnection} >Nova Conexão</Button>
+                    onClick={handleOpenNew} >Nova Conexão</Button>
             </div>
 
             <div className="flex flex-wrap gap-6 ">
-                {conexoes.map(e => (
+                {connections.map(e => (
                     <Card key={e.uid}>
                         <CardContent sx={{ width: 300, backgroundColor: '#fff' }}>
                             <div className="flex flex-col">
@@ -47,11 +75,23 @@ export const Connections = () => {
                             </div>
                         </CardContent>
                         <CardActions>
-                            <Button variant="contained" >Abrir</Button>
+                            <Button variant="contained" onClick={()=>{handleDetails(e.uid!)}}>Abrir</Button>
+                            <Button variant="outlined" onClick={()=>{handleOpen(e)}} >editar</Button>
                         </CardActions>
                     </Card>
                 ))}
             </div>
+
+            <ModalAddConnections
+                isOpen={openNew}
+                handleClose={handleClose}
+            />
+
+            <ModalEditConnection 
+                isOpen={openEdit}
+                handleClose={handleClose}
+                conection={selected}
+            />
         </section>
     )
 }

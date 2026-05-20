@@ -1,49 +1,60 @@
 import { useState, useEffect } from 'react';
 import { db, auth } from '../configs/firebase'; // Altere para o caminho do seu arquivo de config
-import { 
-  collection, 
-  query, 
-  where, 
-  onSnapshot, 
-  addDoc, 
-  doc, 
-  updateDoc, 
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  addDoc,
+  doc,
+  updateDoc,
   deleteDoc,
-  serverTimestamp 
+  serverTimestamp,
+  Query,
+  documentId
 } from 'firebase/firestore';
 import type { Connection } from '../@types/conections';
 
-export function useConnections() {
-  const [conexoes, setConexoes] = useState<Connection[]>([]);
+export function useConnections(connectionId: string | null = null) {
+  const [connections, setConnections] = useState<Connection[]>([]);
   const [loading, setLoading] = useState(true);
   const userUid = auth.currentUser?.uid;
 
-  
+
   useEffect(() => {
     if (!userUid) {
-        setLoading(false);
+      setLoading(false);
       return;
     }
 
-    const q = query(
+
+    let q: Query = query(
       collection(db, "connections"),
       where("userUid", "==", userUid)
     );
+
+    if (connectionId) {
+      q = query(
+        collection(db, "connections"),
+        where("userUid", "==", userUid), 
+        where(documentId(), "==", connectionId) 
+      );
+    }
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const list = snapshot.docs.map(doc => {
         const data = doc.data() as Connection;
         return {
-        uid: doc.id,
-        ...data,
-        createdAt: data.createdAt ? (data.createdAt as any).toDate() : null
+          uid: doc.id,
+          ...data,
+          createdAt: data.createdAt ? (data.createdAt as any).toDate() : null
         };
-    });
-      setConexoes(list);
+      });
+
+      setConnections(list);
       setLoading(false);
-      console.log(list)
     }, (error) => {
-      console.error("Erro ao buscar conexões:", error);
+      console.error("Error fetching connections:", error);
       setLoading(false);
     });
 
@@ -55,18 +66,18 @@ export function useConnections() {
     if (!name.trim()) throw new Error("O nome da conexão é obrigatório");
 
     await addDoc(collection(db, "connections"), {
-      nome: name.trim(),
-      userUid: userUid, 
-      createdAt: serverTimestamp() 
+      name: name.trim(),
+      userUid: userUid,
+      createdAt: serverTimestamp()
     });
   };
 
-  const atualizarConexao = async (uid: string, newName: string) => {
+  const updateConnection = async (uid: string, newName: string) => {
     if (!newName.trim()) throw new Error("O nome não pode ser vazio");
-    
+
     const conexaoRef = doc(db, "connections", uid);
     await updateDoc(conexaoRef, {
-      nome: newName.trim()
+      name: newName.trim()
     });
   };
 
@@ -76,10 +87,10 @@ export function useConnections() {
   };
 
   return {
-    conexoes,
+    connections,
     loading,
     createConnection,
-    atualizarConexao,
+    updateConnection,
     deletarConexao
   };
 }

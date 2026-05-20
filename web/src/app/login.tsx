@@ -30,7 +30,6 @@ export const LoginScreen = () => {
       navigate("/auth/")
     } catch (error) {
       toast.error("Erro ao fazer login. Verifique suas credenciais.")
-      console.log('has')
     }
   }
 

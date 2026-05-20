@@ -14,7 +14,7 @@ export const router = createBrowserRouter([
     element: <_Layout />,
     children : [
        {path: 'connections', element: <Connections />},
-       {path: 'message', element: <NewMessage />},
+       {path: 'message/:connectionId', element: <NewMessage />},
        {path: 'contacts', element: <Contacts />},
     ]
   },

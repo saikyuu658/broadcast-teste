@@ -53,7 +53,6 @@ export function useContact(idConnection: string | null = null) {
             setContacts(listaContatos);
             setLoading(false);
         }, (error) => {
-            console.error("Erro na escuta em tempo real de contatos:", error);
             setLoading(false);
         });
 
@@ -89,16 +88,16 @@ export function useContact(idConnection: string | null = null) {
 
         const contatoRef = doc(db, "contacts", idContato);
         return await updateDoc(contatoRef, {
-            conexaoIds: arrayUnion(idNovaConexao) 
+            conectionsUids: arrayUnion(idNovaConexao) 
         });
     };
 
-    const desvincularDaConexao = async (idContato: string, idRemoveConnection: string) => {
+    const unLinkConnection = async (idContato: string, idRemoveConnection: string) => {
         if (!idContato || !idRemoveConnection) throw new Error("Parâmetros inválidos.");
 
         const contatoRef = doc(db, "contacts", idContato);
         return await updateDoc(contatoRef, {
-            conexaoIds: arrayRemove(idRemoveConnection) 
+            conectionsUids: arrayRemove(idRemoveConnection) 
         });
     };
 
@@ -115,7 +114,7 @@ export function useContact(idConnection: string | null = null) {
         createContact,
         updateContact,
         linkConnection,
-        desvincularDaConexao,
+        unLinkConnection,
         deleteContact
     };
 }

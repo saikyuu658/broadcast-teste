@@ -39,7 +39,6 @@ export const ModalAddContact = (props: ModalAddProps) => {
             toast.success('Contato criado')
             props.handleClose()
         } catch (error) {
-            console.log(error)
             toast.error("Erro ao criar contato")
 
         }
