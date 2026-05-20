@@ -39,11 +39,24 @@ export const ModalAddMessage = (props: ModalAddProps) => {
         if (deliveryMethod == 'schedule') {
             if (!date || !time) {
                 toast.error('Verifique a data e hora enviada')
+                return
             }
-            scheduleTime = date + 'T' + time
+
+            scheduleTime = `${date}T${time}`
+            const scheduleDate = new Date(scheduleTime)
+            const now = new Date()
+
+            if (Number.isNaN(scheduleDate.getTime()) || scheduleDate <= now) {
+                toast.error('A data e hora devem ser maiores que o momento atual')
+                return
+            }
         }
 
         await props.handlecreate(text, scheduleTime, deliveryMethod)
+        setDate('')
+        setTime('')
+        setText('')
+        setDeliveryMethod('now')
 
     }
 

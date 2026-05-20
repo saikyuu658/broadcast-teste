@@ -10,7 +10,7 @@ import Button from "@mui/material/Button"
 const signupSchema = yup.object({
   email: yup.string().email("E-mail inválido").required("Obrigatório"),
   password: yup.string().min(6, "Mínimo 6 caracteres").required("Obrigatório"),
-  name: yup.string().min(6, "Mínimo 6 caracteres").required("Obrigatório"),
+  name: yup.string().required("Obrigatório"),
 }).required()
 
 type SignupFormData = yup.InferType<typeof signupSchema>
@@ -29,6 +29,7 @@ export const SignupScree = () => {
     try {
       await signup(data)
       toast.success("Conta criada com sucesso realizado com sucesso!")
+      navigate('/')
     } catch (error) {
       toast.error("Erro ao criar conta. tente novamente mais tarde.")
     }
@@ -60,8 +61,8 @@ export const SignupScree = () => {
                 label="Nome"
                 type="text"
                 placeholder="Seu nome"
-                error={errors.password?.message ? true : false}
-                helper={errors.password?.message}
+                error={errors.name?.message ? true : false}
+                helper={errors.name?.message}
                 {...register("name")}
               />
               <MyField

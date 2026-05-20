@@ -34,6 +34,7 @@ export const ModalAddConnections = (props: ModalAddProps) => {
             await createConnection(name)
             toast.success('Contato criado')
             props.handleClose()
+            setName('')
         } catch (error) {
             toast.error("Erro ao criar contato")
 

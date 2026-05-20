@@ -4,7 +4,6 @@ import { useAuth } from "../hooks/useAuth";
 
 type NavItem = {
   label: string;
-  icon: React.ReactNode;
   id: string;
 };
 
@@ -24,9 +23,7 @@ export const Sidebar = ( { navItems }: SidebarProps) => {
   }
   return (
     <aside className="flex flex-col w-70 h-screen bg-white border-r border-gray-100 font-sans select-none">
-      {/* Header */}
       <div className="flex items-center gap-3 px-5 py-5 border-b border-gray-100">
-        
         <div className="flex flex-col leading-tight">
           <span className="text-[13px] font-semibold text-gray-900 tracking-tight">
             Broadcast teste
@@ -37,7 +34,6 @@ export const Sidebar = ( { navItems }: SidebarProps) => {
         </div>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-0.5">
         {navItems.map((item) => {
 

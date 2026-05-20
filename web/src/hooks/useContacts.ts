@@ -11,7 +11,9 @@ import {
     orderBy,
     arrayUnion,
     arrayRemove,
-    deleteDoc
+    deleteDoc,
+    getDocs,
+    writeBatch
 } from 'firebase/firestore';
 import type { Contact } from '../@types/contacts';
 
@@ -87,20 +89,61 @@ export function useContact(idConnection: string | null = null) {
         if (!idContato || !idNovaConexao) throw new Error("Parâmetros inválidos.");
 
         const contatoRef = doc(db, "contacts", idContato);
-        return await updateDoc(contatoRef, {
-            conectionsUids: arrayUnion(idNovaConexao) 
+        await updateDoc(contatoRef, {
+            conectionsUids: arrayUnion(idNovaConexao)
         });
+
+        const messagesQuery = query(
+            collection(db, "messages"),
+            where("conectionUid", "==", idNovaConexao),
+            where("status", "==", "SCHEDULE")
+        );
+
+        const querySnapshot = await getDocs(messagesQuery);
+
+        if (!querySnapshot.empty) {
+            const batch = writeBatch(db);
+
+            querySnapshot.docs.forEach((messageDoc) => {
+                const messageRef = doc(db, "messages", messageDoc.id);
+                batch.update(messageRef, {
+                    contactUids: arrayUnion(idContato)
+                });
+            });
+
+            await batch.commit();
+        }
     };
 
     const unLinkConnection = async (idContato: string, idRemoveConnection: string) => {
         if (!idContato || !idRemoveConnection) throw new Error("Parâmetros inválidos.");
 
         const contatoRef = doc(db, "contacts", idContato);
-        return await updateDoc(contatoRef, {
-            conectionsUids: arrayRemove(idRemoveConnection) 
+        await updateDoc(contatoRef, {
+            conectionsUids: arrayRemove(idRemoveConnection)
         });
-    };
 
+        const messagesQuery = query(
+            collection(db, "messages"),
+            where("conectionUid", "==", idRemoveConnection),
+            where("status", "==", "SCHEDULE")
+        );
+
+        const querySnapshot = await getDocs(messagesQuery);
+
+        if (!querySnapshot.empty) {
+            const batch = writeBatch(db);
+
+            querySnapshot.docs.forEach((messageDoc) => {
+                const messageRef = doc(db, "messages", messageDoc.id);
+                batch.update(messageRef, {
+                    contactUids: arrayRemove(idContato)
+                });
+            });
+
+            await batch.commit();
+        }
+    };
     const deleteContact = async (uid: string) => {
         if (!uid) throw new Error("ID do contato é obrigatório.");
 

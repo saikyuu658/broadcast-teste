@@ -27,7 +27,7 @@ export const LoginScreen = () => {
     try {
       await login(data)
       toast.success("Login realizado com sucesso!")
-      navigate("/auth/")
+      navigate("/auth/connections")
     } catch (error) {
       toast.error("Erro ao fazer login. Verifique suas credenciais.")
     }
